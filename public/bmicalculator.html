@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BMI Calculator</title>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        padding-top: 56px;
+      }
+      .footer {
+        text-align: center;
+        padding: 20px 0;
+        background-color: #f8f9fa;
+      }
+      #result {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#">BMI Calculator</a>
+    </nav>
+
+    <div class="container mt-4">
+      <h1 class="mb-4">BMI Calculator</h1>
+      <form id="bmiForm">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="weight">Weight:</label>
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                id="weight"
+                name="weight"
+                required
+                step="0.01"
+              />
+              <div class="input-group-append">
+                <select class="custom-select" id="weightUnit" name="weightUnit">
+                  <option value="kg" selected>Kg</option>
+                  <option value="lbs">lbs</option>
+                </select>
+              </div>
+            </div>
+            <div class="invalid-feedback">Please enter a valid weight.</div>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="height">Height:</label>
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                id="height"
+                name="height"
+                required
+                step="0.01"
+              />
+              <div class="input-group-append">
+                <select class="custom-select" id="heightUnit" name="heightUnit">
+                  <option value="m" selected>Meters</option>
+                  <option value="in">Inches</option>
+                </select>
+              </div>
+            </div>
+            <div class="invalid-feedback">Please enter a valid height.</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="age">Age:</label>
+            <input
+              type="number"
+              class="form-control"
+              id="age"
+              name="age"
+              required
+            />
+          </div>
+          <div class="form-group col-md-6">
+            <label for="gender">Gender:</label>
+            <select class="custom-select" id="gender" name="gender" required>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="calculateBMI()">
+          Calculate BMI
+        </button>
+        <div id="result" class="mt-3"></div>
+      </form>
+    </div>
+    <footer class="footer mt-5">
+      <div class="container">
+        <p>Artem Popov | SE-2205</p>
+      </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+      function calculateBMI() {
+        document.getElementById("weight").classList.remove("is-invalid");
+        document.getElementById("height").classList.remove("is-invalid");
+        const weight = parseFloat(document.getElementById("weight").value);
+        const height = parseFloat(document.getElementById("height").value);
+        const age = parseInt(document.getElementById("age").value);
+        const gender = document.getElementById("gender").value;
+        const weightUnit = document.getElementById("weightUnit").value;
+        const heightUnit = document.getElementById("heightUnit").value;
+        const weightInKg = weightUnit === "lbs" ? weight * 0.453592 : weight;
+        const heightInM = heightUnit === "in" ? height * 0.0254 : height;
+        if (isNaN(weight) || weight <= 0) {
+          document.getElementById("weight").classList.add("is-invalid");
+          return;
+        }
+        if (isNaN(height) || height <= 0) {
+          document.getElementById("height").classList.add("is-invalid");
+          return;
+        }
+        const bmi = weightInKg / Math.pow(heightInM, 2);
+        const interpretation = interpretBMI(bmi, age, gender);
+        document.getElementById("result").innerHTML = `
+        <div class="alert alert-success" role="alert">
+          <p>Your BMI is: ${bmi.toFixed(2)}</p>
+          <p>${interpretation}</p>
+        </div>
+      `;
+      }
+      function interpretBMI(bmi, age, gender) {
+        if (bmi < 18.5) {
+          return "Underweight. Please consult with a healthcare professional.";
+        } else if (bmi >= 18.5 && bmi < 24 && gender == "female") {
+          return "Normal Weight. You have a normal BMI. Keep up the good work!";
+        } else if (bmi >= 18.5 && bmi < 25 && gender == "male") {
+          return "Normal Weight. You have a normal BMI. Keep up the good work!";
+        } else if (bmi >= 24 && bmi < 30 && gender == "female") {
+          return "Overweight. Consider adopting a healthier lifestyle.";
+        } else if (bmi >= 25 && bmi < 30 && gender == "male") {
+          return "Overweight. Consider adopting a healthier lifestyle.";
+        } else {
+          return "Obese. Please seek medical advice.";
+        }
+      }
+    </script>
+  </body>
+</html>
